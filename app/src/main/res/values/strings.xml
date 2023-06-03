@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Weather</string>
+    <string name="degree">\u00B0</string>
+
+    //Navigation Drawer
+    <string name="to_fahrenheit">To Fahrenheit</string>
+    <string name="to_degree">To Degree</string>
+    <string name="temperature_units">Temperature Units</string>
+    <string name="manage_locations">Manage Locations</string>
+    <string name="other_locations">Other Locations</string>
+    <string name="current_location">Current Location</string>
+
+    //Locader
+    <string name="loader_message">Loading, please wait…</string>
+
+</resources>
