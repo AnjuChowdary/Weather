@@ -49,23 +49,19 @@ class WeatherViewModel(private val mRepository: DataRepository): ViewModel(), De
 
     fun getLocality(context: Context) {
         _mLocality.value = ""
-        viewModelScope.launch {
-            LocationUtils.getUserLocation(context) {
-                val locality = LocationUtils.getCurrentLocality(it, context = context)
-                _mLocality.value = locality
-                CommonUtils.saveCity(context = context, locality)
-            }
+        LocationUtils.getUserLocation(context) {
+            val locality = LocationUtils.getCurrentLocality(it, context = context)
+            _mLocality.value = locality
+            CommonUtils.saveCity(context = context, locality)
         }
     }
 
     fun convertTempUnit(context: Context, unitType: TemperatureUnitType) {
-        viewModelScope.launch {
-            CommonUtils.saveTempUnit(context = context, unitType = unitType)
-            _mTempData.value = TemperatureData(
-                temperature = _mWeatherResponse.value.response?.main?.temp_min?.convertedValue(context = context) ?: "",
-                minimumTemperature = _mWeatherResponse.value.response?.main?.temp_min?.convertedValue(context = context) ?: "",
-                maximumTemperature = _mWeatherResponse.value.response?.main?.temp_min?.convertedValue(context = context) ?: "",
-                feelsLike = _mWeatherResponse.value.response?.main?.feels_like?.convertedValue(context = context) ?: "")
-        }
+        CommonUtils.saveTempUnit(context = context, unitType = unitType)
+        _mTempData.value = TemperatureData(
+            temperature = _mWeatherResponse.value.response?.main?.temp_min?.convertedValue(context = context) ?: "",
+            minimumTemperature = _mWeatherResponse.value.response?.main?.temp_min?.convertedValue(context = context) ?: "",
+            maximumTemperature = _mWeatherResponse.value.response?.main?.temp_min?.convertedValue(context = context) ?: "",
+            feelsLike = _mWeatherResponse.value.response?.main?.feels_like?.convertedValue(context = context) ?: "")
     }
 }

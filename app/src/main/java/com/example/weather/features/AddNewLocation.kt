@@ -68,7 +68,7 @@ fun AddNewLocation(navController: NavHostController) {
         Image(
             modifier = Modifier.fillMaxSize(),
             painter = painterResource(R.drawable.bluesky),
-            contentDescription = "background_image",
+            contentDescription = "Background Image",
             contentScale = ContentScale.FillBounds
         )
         Scaffold(modifier = Modifier
@@ -78,88 +78,17 @@ fun AddNewLocation(navController: NavHostController) {
             contentColor = Color.Transparent,
             topBar = {
                 if (searchWidgetState == SearchWidgetState.Open) {
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color.Transparent)
-                            .height(56.dp),
-                        color = Color.Transparent
-                    ) {
-                        TextField(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            value = searchTextState,
-                            onValueChange = {
-                                searchTextState = it
-                            },
-                            placeholder = {
-                                Text(
-                                    modifier = Modifier.alpha(ContentAlpha.medium),
-                                    text = "Search",
-                                    style = WeatherFontTypography.labelMedium,
-                                    color = Color.White
-                                )
-                            },
-                            singleLine = true,
-                            maxLines = 1,
-                            leadingIcon = {
-                                Icon(
-                                    modifier = Modifier.alpha(ContentAlpha.high),
-                                    imageVector = Icons.Rounded.Search,
-                                    contentDescription = "Search Icon",
-                                    tint = Color.White
-                                )
-                            },
-                            trailingIcon = {
-                                IconButton(
-                                    onClick = {
-                                        if (searchTextState.text.isNotEmpty() || searchTextState.text.isNotBlank()) {
-                                            searchTextState = TextFieldValue("")
-                                        } else {
-                                            searchWidgetState = SearchWidgetState.Closed
-                                        }
-                                    }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Close,
-                                        contentDescription = "Close Icon",
-                                        tint = Color.White
-                                    )
-                                }
-                            },
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                            keyboardActions = KeyboardActions (
-                                onSearch = {
-                                    searchWidgetState = SearchWidgetState.Closed
-                                }
-                            ),
-                            textStyle = WeatherFontTypography.labelMedium
-                        )
-                    }
+                    SearchBar(searchWidgetState = {
+                        searchWidgetState = it
+                    }, state = {
+                        searchTextState = it
+                    })
                 } else {
-                    TopAppBar( title = {
-                        Text(text = "Search Location", style = WeatherFontTypography.labelMedium, color = Color.White)
-                    },
-                        navigationIcon = {
-                            IconButton(
-                                onClick = {
-                                    navController.popBackStack()
-                                }
-                            ) {
-                                Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = "Drawer Icon", tint = Color.White)
-                            }
-                        },
-                        actions = {
-                            IconButton(onClick = { searchWidgetState = SearchWidgetState.Open }) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Search,
-                                    contentDescription = "",
-                                    tint = Color.White,
-                                )
-                            }
-                        },
-                        colors = TopAppBarDefaults.smallTopAppBarColors(Color.Transparent)
-                    )
+                    CityTopBar(searchWidgetState = { state ->
+                        searchWidgetState = state
+                    }, onBackClick = {
+                        navController.popBackStack()
+                    })
                 }
             }, content = { it ->
                 Column(modifier = Modifier
@@ -214,7 +143,97 @@ fun Cities(state: TextFieldValue, action: (String) -> Unit) {
     }
 }
 
-
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchBar(searchWidgetState: (SearchWidgetState) -> Unit, state: (TextFieldValue) -> Unit) {
+    var searchTextState by remember { mutableStateOf(TextFieldValue("")) }
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.Transparent)
+            .height(56.dp),
+        color = Color.Transparent
+    ) {
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth(),
+            value = searchTextState,
+            onValueChange = {
+                state(it)
+                searchTextState = it
+            },
+            placeholder = {
+                Text(
+                    modifier = Modifier.alpha(ContentAlpha.medium),
+                    text = "Search",
+                    style = WeatherFontTypography.labelMedium,
+                    color = Color.White
+                )
+            },
+            singleLine = true,
+            maxLines = 1,
+            leadingIcon = {
+                Icon(
+                    modifier = Modifier.alpha(ContentAlpha.high),
+                    imageVector = Icons.Rounded.Search,
+                    contentDescription = "Search Icon",
+                    tint = Color.White
+                )
+            },
+            trailingIcon = {
+                IconButton(
+                    onClick = {
+                        if (searchTextState.text.isNotEmpty() || searchTextState.text.isNotBlank()) {
+                            searchTextState = TextFieldValue("")
+                        } else {
+                            searchWidgetState(SearchWidgetState.Closed)
+                        }
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Close,
+                        contentDescription = "Close Icon",
+                        tint = Color.White
+                    )
+                }
+            },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions (
+                onSearch = {
+                    searchWidgetState(SearchWidgetState.Closed)
+                }
+            ),
+            textStyle = WeatherFontTypography.labelMedium
+        )
+    }
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CityTopBar(searchWidgetState: (SearchWidgetState) -> Unit, onBackClick: () -> Unit) {
+    TopAppBar( title = {
+        Text(text = "Search Location", style = WeatherFontTypography.labelMedium, color = Color.White)
+    },
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    onBackClick()
+                }
+            ) {
+                Icon(imageVector = Icons.Rounded.ArrowBack, contentDescription = "Drawer Icon", tint = Color.White)
+            }
+        },
+        actions = {
+            IconButton(onClick = { searchWidgetState(SearchWidgetState.Open) }) {
+                Icon(
+                    imageVector = Icons.Rounded.Search,
+                    contentDescription = "",
+                    tint = Color.White,
+                )
+            }
+        },
+        colors = TopAppBarDefaults.smallTopAppBarColors(Color.Transparent)
+    )
+}
 
 @Preview(showBackground = true)
 @Composable

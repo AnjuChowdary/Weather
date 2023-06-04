@@ -70,11 +70,6 @@ dependencies {
     implementation 'com.google.accompanist:accompanist-permissions:0.24.13-rc'
     implementation "com.google.android.gms:play-services-location:21.0.1"
 
-    //Retrofit for Networking
-    implementation 'com.google.code.gson:gson:2.8.7'
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.6.0'
     implementation 'androidx.wear.compose:compose-material:1.0.0-alpha19'
     testImplementation 'junit:junit:4.12'
     //Jetpack Naivgation
@@ -97,11 +92,5 @@ dependencies {
     androidTestImplementation 'org.mockito:mockito-core:5.3.1'
     testImplementation 'org.mockito:mockito-core:5.3.1'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
-    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4") {
-        // https://github.com/Kotlin/kotlinx.coroutines/tree/master/kotlinx-coroutines-debug#debug-agent-and-android
-        exclude group: "org.jetbrains.kotlinx", module: "kotlinx-coroutines-debug"
-    }
-//    androidTestImplementation "org.koin:koin-test:2.x.x"
-//    testImplementation "org.koin:koin-test:2.x.x"
-//    androidTestImplementation "org.mockito:mockito-android:2.22.0"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4"
 }

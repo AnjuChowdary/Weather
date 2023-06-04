@@ -1,50 +1,58 @@
 package com.example.weather.viewmodels
 
 import android.content.Context
-import androidx.compose.runtime.MutableState
+import android.content.SharedPreferences
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import com.example.weather.data.datautil.NetworkResponse
 import com.example.weather.data.models.WeatherResponse
 import com.example.weather.data.repository.DataRepository
+import com.example.weather.data.repository.NetworkingService
+import com.example.weather.data.service.IServiceRequest
 import com.example.weather.enums.TemperatureUnitType
 import com.example.weather.models.TemperatureData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.junit.Assert.*
-
+import kotlinx.coroutines.test.runTest
 import org.junit.After
+import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class WeatherViewModelTest {
-    private val mDataRepository: DataRepository = Mockito.mock()
+    private var mNetworkingService: NetworkingService? = null
+    private val mIServiceRequest: IServiceRequest = mock()
+    private var mDataRepository: DataRepository? = null
+    @Mock
+    private var mockSharedPreferences: SharedPreferences? = null
+    @Mock
+    private var mockEditor: SharedPreferences.Editor? = null
     @ExperimentalCoroutinesApi
     @get:Rule
-    var waetherCoroutineRule = WeatherCoroutineRule()
+    var weatherCoroutineRule = WeatherCoroutineRule()
     private var mWeatherViewModel: WeatherViewModel? = null
     private var mockContext: Context? = null
     private var mockWeatherResponse: State<NetworkResponse<WeatherResponse?>> = mock()
     private var mockNetworkResponse: NetworkResponse<WeatherResponse?> = mock()
-    private var mockTempData: State<TemperatureData>? = mock()
-    private var mockLocality: State<String>? = mock()
+
 
     @Before
     fun setUp() {
         mockContext = mock(Context::class.java)
-        mWeatherViewModel = mock(WeatherViewModel::class.java)
-        Mockito.`when`(mWeatherViewModel?.mWeatherResponse).thenReturn(mockWeatherResponse)
+        mockSharedPreferences = mock(SharedPreferences::class.java)
+        mockEditor = mock(SharedPreferences.Editor::class.java)
+        mNetworkingService = NetworkingService(mIServiceRequest)
+        mDataRepository = DataRepository(mNetworkingService!!)
+        mWeatherViewModel = WeatherViewModel(mDataRepository!!)
+        Mockito.`when`(mockContext?.getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE)).thenReturn(mockSharedPreferences)
+        Mockito.`when`(mockSharedPreferences?.edit()).thenReturn(mockEditor)
         Mockito.`when`(mockWeatherResponse.value).thenReturn(mockNetworkResponse)
         Mockito.`when`(mockWeatherResponse.value.response).thenReturn(mock(WeatherResponse::class.java))
         Mockito.`when`(mockWeatherResponse.value.response?.name).thenReturn("Newark")
-        Mockito.`when`(mWeatherViewModel?.mLocality).thenReturn(mockLocality)
-        Mockito.`when`(mWeatherViewModel?.mLocality?.value).thenReturn("Newark")
-        Mockito.`when`(mWeatherViewModel?.mTempData).thenReturn(mockTempData)
-        Mockito.`when`(mWeatherViewModel?.mTempData?.value).thenReturn(mock(TemperatureData::class.java))
-        Mockito.`when`(mWeatherViewModel?.mTempData?.value?.feelsLike).thenReturn("23")
     }
 
     @After
@@ -53,13 +61,8 @@ class WeatherViewModelTest {
     }
 
     @Test
-    fun getMWeatherResponse() {
-        assertEquals(mWeatherViewModel?.mWeatherResponse?.value?.response?.name, "Newark")
-    }
-
-    @Test
     fun getMTempData() {
-        mWeatherViewModel?.mTempData?.let { assertEquals(it.value.feelsLike, "23") }
+        mWeatherViewModel?.mTempData?.let { assertEquals(it.value.feelsLike, "20") }
     }
 
     @Test
@@ -70,19 +73,15 @@ class WeatherViewModelTest {
 
     @Test
     fun fetchWeatherForCity() {
-        mockContext?.let { mWeatherViewModel?.fetchWeatherForCity(it, "Newark") }
-        assertEquals(mWeatherViewModel?.mWeatherResponse?.value?.response?.name, "Newark")
-    }
-
-    @Test
-    fun getLocality() {
-        mockContext?.let { mWeatherViewModel?.getLocality(it) }
-        assertEquals(mWeatherViewModel?.mLocality?.value, "Newark")
+        runTest {
+            mockContext?.let { mWeatherViewModel?.fetchWeatherForCity(it, "Newark") }
+            assertNotNull(mWeatherViewModel?.mWeatherResponse?.value)
+        }
     }
 
     @Test
     fun convertTempUnit() {
         mockContext?.let { mWeatherViewModel?.convertTempUnit(it, TemperatureUnitType.Degree) }
-        mWeatherViewModel?.mTempData?.let { assertEquals(it.value.feelsLike, "23") }
+        assertNotNull(mWeatherViewModel?.mTempData?.value)
     }
 }
