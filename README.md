@@ -6,6 +6,11 @@ It has two screens Home and AddNewLocation. This application provided the inform
 
 User has to allow permissions for Locations to fetch the current location and provide weather information. 
 
+## Modules
+There are two modules
+1. weather-app -> Is application type module to handle the UI
+2. weather-data -> Is library type module to handle the data operations
+
 ## Overview of Application Architecture 
 
 1. Used Kotlin as Coding Language
