@@ -1,10 +1,7 @@
 package com.example.weather.utils
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.util.Log
 import androidx.core.app.ActivityCompat
