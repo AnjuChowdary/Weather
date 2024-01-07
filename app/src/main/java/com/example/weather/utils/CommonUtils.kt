@@ -2,9 +2,6 @@ package com.example.weather.utils
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.location.Geocoder
-import android.util.Log
-import androidx.core.app.ActivityCompat
 import com.example.weather.enums.NavigationItemType
 import com.example.weather.enums.TemperatureUnitType
 import com.example.weather.models.LocationLatAndLon
