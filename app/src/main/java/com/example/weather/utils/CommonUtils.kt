@@ -7,7 +7,6 @@ import com.example.weather.enums.TemperatureUnitType
 import com.example.weather.models.LocationLatAndLon
 import com.example.weather.models.NavigationItem
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
